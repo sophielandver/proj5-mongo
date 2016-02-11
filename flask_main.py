@@ -159,7 +159,7 @@ def humanize_arrow_date( date ):
     Arrow will try to humanize down to the minute, so we
     need to catch 'today' as a special case. 
     """
-    now = arrow.utcnow().to('local').replace(hour=0)
+    now = arrow.utcnow().to('local').replace(hour=0) #change to midnight hour 00:00
     return RelativeDate(date, now)
     
     

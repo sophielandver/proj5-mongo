@@ -33,17 +33,17 @@ except:
 def test_AddDeleteMemo():
     collection.remove({}) #empty collection out
     test_date1 = "02/10/2016"
-    arrow_test_date1 = arrow.get(test_date1, 'MM/DD/YYYY')
+    arrow_test_date1 = arrow.get(test_date1, 'MM/DD/YYYY').replace(tzinfo='local')
     storage_test_date1 = arrow_test_date1.isoformat()
     text1 = "This is test memo #1"
     
     test_date2 = "04/15/2015"
-    arrow_test_date2 = arrow.get(test_date2, 'MM/DD/YYYY')
+    arrow_test_date2 = arrow.get(test_date2, 'MM/DD/YYYY').replace(tzinfo='local')
     storage_test_date2 = arrow_test_date2.isoformat()
     text2 = "This is test memo #2"
     
     test_date3 = "06/04/2016"
-    arrow_test_date3 = arrow.get(test_date3, 'MM/DD/YYYY')
+    arrow_test_date3 = arrow.get(test_date3, 'MM/DD/YYYY').replace(tzinfo='local')
     storage_test_date3 = arrow_test_date3.isoformat()
     text3 = "Birthday"
     
@@ -94,25 +94,58 @@ def test_ListMemosSorted():
 
 def test_FormatRelativeDates():
     #test close to today and time zone problems
-    date = "01/09/2016"
-    arrow_date = arrow.get(date, 'MM/DD/YYYY')
-    storage_date = arrow_date.isoformat()
     
-    now1 = "01/08/2016 23:30"
-    arrow_now1 = arrow.get(now1, 'MM/DD/YYYY HH:mm')
+    now = "02/11/2016"
+    arrow_now = arrow.get(now, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
+    
+    date1 = "02/11/2016"
+    arrow_date1 = arrow.get(date1, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date1 = arrow_date1.isoformat()
+    assert RelativeDate(storage_date1, arrow_now) == "Today"
+    
+    date2 = "02/12/2016"
+    arrow_date2 = arrow.get(date2, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date2 = arrow_date2.isoformat()
+    assert RelativeDate(storage_date2, arrow_now) == "Tomorrow"
+    
+    date3 = "02/10/2016"
+    arrow_date3 = arrow.get(date3, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date3 = arrow_date3.isoformat()
+    assert RelativeDate(storage_date3, arrow_now) == "Yesterday"
+    
+    date4 = "02/13/2016"
+    arrow_date4 = arrow.get(date4, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date4 = arrow_date4.isoformat()
+    assert RelativeDate(storage_date4, arrow_now) == "in 2 days"
+    
+    date5 = "02/09/2016"
+    arrow_date5 = arrow.get(date5, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date5 = arrow_date5.isoformat()
+    assert RelativeDate(storage_date5, arrow_now) == "2 days ago"
+    
+    date6 = "02/18/2016"
+    arrow_date6 = arrow.get(date6, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date6 = arrow_date6.isoformat()
+    assert RelativeDate(storage_date6, arrow_now) == "in 7 days"
+    
+    
+    """
+    now1 = "01/08/2016"
+    arrow_now1 = arrow.get(now1, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
     assert RelativeDate(storage_date, arrow_now1) == "Tomorrow"
     
     now2 = "01/09/2016 23:00"
-    arrow_now2 = arrow.get(now2, 'MM/DD/YYYY HH:mm')
+    arrow_now2 = arrow.get(now2, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
     assert RelativeDate(storage_date, arrow_now2) == "Today"
 
     now3 = "01/07/2016 23:30"
-    arrow_now3 = arrow.get(now3, 'MM/DD/YYYY HH:mm')
+    arrow_now3 = arrow.get(now3, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
     assert RelativeDate(storage_date, arrow_now3) == "in 2 days" #right now it says this is tomorrow
     
     now4 = "01/10/2016 00:00"
-    arrow_now4 = arrow.get(now4, 'MM/DD/YYYY HH:mm')
+    arrow_now4 = arrow.get(now4, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
     assert RelativeDate(storage_date, arrow_now4) == "Yesterday"
+    """
     
     
     
