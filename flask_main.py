@@ -195,7 +195,6 @@ def get_memos(collection):
     Returns all memos in the database, in a form that
     can be inserted directly in the 'session' object.
     """
-    app.logger.debug("get_memos")
     records = [ ] #list of dictionaries {"type": "dated_memo", "date": 06/04/1995, "text":"Please clean the car"}
     for record in collection.find( { "type": "dated_memo" } ):
         #record['date'] = arrow.get(record['date']).isoformat() #THIS IS A STRING

@@ -82,18 +82,27 @@ function DeleteSelected(){
   
   console.log(selected);
   
+    $.ajax({
+    dataType: "json",
+    url: $SCRIPT_ROOT + '/removeMemo',
+    data: {toRemove: selected},
+    complete: location.assign($SCRIPT_ROOT + '/updateAfterDelete')
+    });
   
+  /*
     // send object id's to be deleted 
     $.getJSON($SCRIPT_ROOT + '/removeMemo',
         // The object to pass to the server
         { toRemove: selected },
         // The function to call with the response
-        function(data) {
+        function(data, "complete") {
+            location.assign($SCRIPT_ROOT + '/updateAfterDelete');
         }); // End of the call to getJSON
       
-    
-    location.assign($SCRIPT_ROOT + '/updateAfterDelete');
+    //location.assign($SCRIPT_ROOT + '/updateAfterDelete');
+*/
 }
+
 
 </script>
 </body>
