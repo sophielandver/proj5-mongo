@@ -11,7 +11,9 @@ from flask_main import humanize_arrow_date
 from flask_main import RelativeDate
 
 from pymongo import MongoClient
+import CONFIG
 
+"""
 MONGO_PORT=27017 #  standard mongo port
 MONGO_PW = "memo123"  
 MONGO_USER = "memo"
@@ -23,6 +25,17 @@ try:
     db = dbclient.memos #memos is name of database that you created 
     collection = db.testdated  #testdated is name of collection. you are creating this collection right now
     #the parts that you fill in the database are the things that youll use to find stuff MAKING NEW COLLECTION JUST FOR TESTING
+
+except:
+    print("Failure opening database.  Is Mongo running? Correct password?")
+    sys.exit(1)
+"""
+
+try: 
+    dbclient = MongoClient(CONFIG.MONGO_URL)
+    db = dbclient.memos #memos is name of database that you created 
+    collection = db.testdated  #dated is name of collection. you are creating this collection right now
+    #the parts that you fill in the database are the things that youll use to find stuff
 
 except:
     print("Failure opening database.  Is Mongo running? Correct password?")
