@@ -1,8 +1,6 @@
 """
 Nose tests for flask_main.py
 """
-#want to test adding to database, deleting from data base, listing the memos (in sorted), and formatting dates
-#make a new database to use for testing  
 import arrow
 from flask_main import AddNewDatedMemo
 from flask_main import removeSelectedMemos 
@@ -13,29 +11,10 @@ from flask_main import RelativeDate
 from pymongo import MongoClient
 import CONFIG
 
-"""
-MONGO_PORT=27017 #  standard mongo port
-MONGO_PW = "memo123"  
-MONGO_USER = "memo"
-MONGO_URL = "mongodb://{}:{}@localhost:{}/memos".format(MONGO_USER,MONGO_PW,MONGO_PORT)
-
-
-try: 
-    dbclient = MongoClient(MONGO_URL)
-    db = dbclient.memos #memos is name of database that you created 
-    collection = db.testdated  #testdated is name of collection. you are creating this collection right now
-    #the parts that you fill in the database are the things that youll use to find stuff MAKING NEW COLLECTION JUST FOR TESTING
-
-except:
-    print("Failure opening database.  Is Mongo running? Correct password?")
-    sys.exit(1)
-"""
-
 try: 
     dbclient = MongoClient(CONFIG.MONGO_URL)
     db = dbclient.memos #memos is name of database that you created 
     collection = db.testdated  #dated is name of collection. you are creating this collection right now
-    #the parts that you fill in the database are the things that youll use to find stuff
 
 except:
     print("Failure opening database.  Is Mongo running? Correct password?")
@@ -44,6 +23,9 @@ except:
 
 
 def test_AddDeleteMemo():
+    """
+    Test adding memos into database and deleting memos from database. 
+    """
     collection.remove({}) #empty collection out
     test_date1 = "02/10/2016"
     arrow_test_date1 = arrow.get(test_date1, 'MM/DD/YYYY').replace(tzinfo='local')
@@ -87,10 +69,12 @@ def test_AddDeleteMemo():
     
 
 def test_ListMemosSorted():
+    """
+    Test listing the memos from the database in sorted order by date.
+    """
     collection.remove({}) #empty collection out
     sorted_dates = ["2014-07-08", "2015-05-20", "2015-11-14", "2016-01-02", "2016-01-03", "2016-01-04", "2017-08-13"]
     sorted_text = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"] 
-    #2014-07-08T00:00:00+00:00
     AddNewDatedMemo("01/03/2016", "Fifth", collection)
     AddNewDatedMemo("11/14/2015", "Third", collection)
     AddNewDatedMemo("05/20/2015", "Second", collection)
@@ -106,8 +90,11 @@ def test_ListMemosSorted():
     
 
 def test_FormatRelativeDates():
+    """
+    Test date formatting, especially for dates close to today. Also, test potential 
+    time zone issues. 
+    """
     #test close to today and time zone problems
-    
     now = "02/11/2016"
     arrow_now = arrow.get(now, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
     
@@ -141,32 +128,6 @@ def test_FormatRelativeDates():
     storage_date6 = arrow_date6.isoformat()
     assert RelativeDate(storage_date6, arrow_now) == "in 7 days"
     
-    
-    """
-    now1 = "01/08/2016"
-    arrow_now1 = arrow.get(now1, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
-    assert RelativeDate(storage_date, arrow_now1) == "Tomorrow"
-    
-    now2 = "01/09/2016 23:00"
-    arrow_now2 = arrow.get(now2, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
-    assert RelativeDate(storage_date, arrow_now2) == "Today"
 
-    now3 = "01/07/2016 23:30"
-    arrow_now3 = arrow.get(now3, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
-    assert RelativeDate(storage_date, arrow_now3) == "in 2 days" #right now it says this is tomorrow
     
-    now4 = "01/10/2016 00:00"
-    arrow_now4 = arrow.get(now4, 'MM/DD/YYYY').replace(tzinfo='local').replace(hour=0)
-    assert RelativeDate(storage_date, arrow_now4) == "Yesterday"
-    """
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
 

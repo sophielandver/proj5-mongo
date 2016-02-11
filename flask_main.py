@@ -19,7 +19,6 @@ from flask import url_for
 
 import json
 import logging
-#logging.basicConfig(filename="Bugs.txt")
 
 # Date handling 
 import arrow # Replacement for datetime, based on moment.js
@@ -42,7 +41,6 @@ try:
     dbclient = MongoClient(CONFIG.MONGO_URL)
     db = dbclient.memos #memos is name of database that you created 
     collection = db.dated  #dated is name of collection. you are creating this collection right now
-    #the parts that you fill in the database are the things that youll use to find stuff
 
 except:
     print("Failure opening database.  Is Mongo running? Correct password?")
@@ -69,25 +67,12 @@ def index():
 @app.route("/_AddMemo", methods =["POST"])
 def addMemo():
     date = request.form["Date"]
-    #app.logger.debug("here is type of date " + str(type(date)))
     text = request.form["Memo"]
     AddNewDatedMemo(date, text, collection)
     flask.session['memos'] = get_memos(collection) #filling the session object with updated memos
     for memo in flask.session['memos']:
         app.logger.debug("Memo: " + str(memo))
     return flask.render_template('index.html') #redirecting to index.html
-
-
-
-def AddNewDatedMemo(date, text, collection):
-    arrow_date = arrow.get(date, 'MM/DD/YYYY').replace(tzinfo='local')
-    storage_date = arrow_date.isoformat()
-    #print("HERE: " + storage_date)
-    record = { "type": "dated_memo", 
-           "date": storage_date, 
-           "text": text
-          }
-    collection.insert(record)
     
 
 @app.route("/_CancelMemo", methods =["POST"])
@@ -100,14 +85,8 @@ def cancelMemo():
 def removeMemo():
     temp_selected = request.args.get('toRemove', 0, type=str)
     selected = temp_selected.split()
-    #selected = list(temp_selected)
     removeSelectedMemos(selected, collection)
     return "nothing"
-
-def removeSelectedMemos(selected, collection):
-    for record in collection.find():
-        if (str(record["_id"]) in selected):
-            collection.remove(record)
             
       
 
@@ -119,14 +98,10 @@ def updatePageAfterDelete():
     return flask.render_template('index.html') #redirecting to index.html
 
 
-
-# We don't have an interface for creating memos yet
 @app.route("/create")
 def create():
     app.logger.debug("Create")
     return flask.render_template('create.html')
-
-
 
 
 @app.errorhandler(404)
@@ -142,14 +117,6 @@ def page_not_found(error):
 #
 #################
 
-# NOT TESTED with this application; may need revision 
-#@app.template_filter( 'fmtdate' )
-# def format_arrow_date( date ):
-#     try: 
-#         normal = arrow.get( date )
-#         return normal.to('local').format("ddd MM/DD/YYYY")
-#     except:
-#         return "(bad date)"
 
 @app.template_filter( 'humanize' )
 def humanize_arrow_date( date ):
@@ -164,11 +131,16 @@ def humanize_arrow_date( date ):
     
     
 def RelativeDate(date, now):
+    """
+    This function returns the relative date of date to now. 
+    Arguments: 
+        date: an ISO date string 
+        now: an arrow time object
+    Returns: the relative date that date is to now. 
+    """
     try:
-        #then = arrow.get(date).to('local') #user date
         then = arrow.get(date)
-        #now = arrow.utcnow().to('local')
-        if then.date() == now.date(): #for big dif in hours dont want in 18 hours
+        if then.date() == now.date(): 
             human = "Today"
         elif then.date() == (now.replace(days=+1)).date():
             human = "Tomorrow" 
@@ -176,7 +148,7 @@ def RelativeDate(date, now):
             human = "Yesterday"
         else: 
             human = then.humanize(now)
-            if human == "a day ago": #i added this
+            if human == "a day ago": 
                 human = "Yesterday"
             if human == "in a day":
                 human = "Tomorrow"
@@ -197,14 +169,42 @@ def get_memos(collection):
     """
     records = [ ] #list of dictionaries {"type": "dated_memo", "date": 06/04/1995, "text":"Please clean the car"}
     for record in collection.find( { "type": "dated_memo" } ):
-        #record['date'] = arrow.get(record['date']).isoformat() #THIS IS A STRING
-        #print("here is type!!: " + str(type(record['date'])))
-        #print("here: " + str(record))
         record['_id'] = str(record['_id'])
-        #del record['_id']
         records.append(record)
     records.sort(key=lambda r: r["date"])
-    return records 
+    return records
+
+
+def AddNewDatedMemo(date, text, collection):
+    """
+    Adds a dated memo into the collection. 
+    Arguments:
+        date: a string of the the form "MM/DD/YYYY"
+        text: a string 
+        collection: the collection within the database to which we will 
+                    add the memo. 
+    Returns: nothing
+    """
+    arrow_date = arrow.get(date, 'MM/DD/YYYY').replace(tzinfo='local')
+    storage_date = arrow_date.isoformat()
+    record = { "type": "dated_memo", 
+           "date": storage_date, 
+           "text": text
+          }
+    collection.insert(record) 
+
+def removeSelectedMemos(selected, collection):
+    """
+    Removes a list of memos given by a list of object id's from the collection. 
+    Arguments:
+        selected: a string containing the object id's of the memo's we wish to remove 
+                  from the collection. Each object id is separated by 1 space. 
+        collection: the collection within the database from which we will remove the memos. 
+    Returns: nothing
+    """
+    for record in collection.find():
+        if (str(record["_id"]) in selected):
+            collection.remove(record)
 
 
 if __name__ == "__main__":
