@@ -19,6 +19,7 @@ from flask import url_for
 
 import json
 import logging
+#logging.basicConfig(filename="Bugs.txt")
 
 # Date handling 
 import arrow # Replacement for datetime, based on moment.js
