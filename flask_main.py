@@ -200,7 +200,7 @@ def get_memos(collection):
     for record in collection.find( { "type": "dated_memo" } ):
         #record['date'] = arrow.get(record['date']).isoformat() #THIS IS A STRING
         #print("here is type!!: " + str(type(record['date'])))
-        print("here: " + str(record))
+        #print("here: " + str(record))
         record['_id'] = str(record['_id'])
         #del record['_id']
         records.append(record)

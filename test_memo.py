@@ -106,9 +106,9 @@ def test_FormatRelativeDates():
     arrow_now2 = arrow.get(now2, 'MM/DD/YYYY HH:mm')
     assert RelativeDate(storage_date, arrow_now2) == "Today"
 
-    #now3 = "01/07/2016 23:30"
-    #arrow_now3 = arrow.get(now3, 'MM/DD/YYYY HH:mm')
-    #assert RelativeDate(storage_date, arrow_now3) == "in two days" #right now it says this is tomorrow
+    now3 = "01/07/2016 23:30"
+    arrow_now3 = arrow.get(now3, 'MM/DD/YYYY HH:mm')
+    assert RelativeDate(storage_date, arrow_now3) == "in 2 days" #right now it says this is tomorrow
     
     now4 = "01/10/2016 00:00"
     arrow_now4 = arrow.get(now4, 'MM/DD/YYYY HH:mm')
