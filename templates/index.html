@@ -86,7 +86,8 @@ function DeleteSelected(){
     dataType: "json",
     url: $SCRIPT_ROOT + '/removeMemo',
     data: {toRemove: selected},
-    complete: location.assign($SCRIPT_ROOT + '/updateAfterDelete')
+    complete: function(){ 
+            location.assign($SCRIPT_ROOT + '/updateAfterDelete'); }
     });
   
   /*
