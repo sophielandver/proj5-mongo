@@ -19,6 +19,17 @@
 
    <!-- Our own style sheet -->
    <link rel="stylesheet" href="/static/css/memos.css" />
+   
+   
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script>
+  $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+  </script>
 
 
 </head>
@@ -37,18 +48,24 @@
   {% endif %}
 {% endwith %}
 
-<form method="PUT" action="_create">
+<form method="POST">
 <div class="row">
     <div class="col-md-2">
-    <input type="text" class="form-control"
-     name="Date" value=""/>
+    <input type="text" id="datepicker" class="form-control" name="Date" value="Click to Pick a Date" readonly='true'/>
   </div>
+  
   <div class="col-md-10">
     <input type="text" class="form-control"
       name="Memo" value="Memo" />
   </div>
+  
+
+ <button type="submit" formaction="/_AddMemo">Save</button>
+ <button type="submit" formaction="/_CancelMemo">Cancel</button>
+
  </div>
 </form>
 </div> 
+
 </body>
 </html>

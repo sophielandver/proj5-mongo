@@ -38,12 +38,15 @@
 
 <h1>Memos</h1>
 
+<button onclick="GoToCreate()">Create Memo</button>
+<button onclick="DeleteSelected()">Delete Selected</button>
+
 {% if session.memos %}
     {% for memo in session.memos %}
   <div class="memo">
   <div class="row">
   <div class="col-md-2">
-    {{ memo.date | humanize }}
+    <input id="{{memo._id}}" type="checkbox"> {{ memo.date | humanize }}
   </div>
   <div class="col-md-10">
     {{ memo.text }}
@@ -58,5 +61,40 @@
  
 
 </div> <!-- container -->
+
+
+<script>
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+function GoToCreate(){
+    location.assign($SCRIPT_ROOT + '/create')
+}
+
+function DeleteSelected(){
+    selected = "";
+    $('input[type=checkbox]').each(function () {
+       if (this.checked)
+       {
+            console.log(this.id);
+            //selected.push(this.id);
+            selected = selected + " " + this.id
+       }
+  });
+  
+  console.log(selected);
+  
+  
+    // send object id's to be deleted 
+    $.getJSON($SCRIPT_ROOT + '/removeMemo',
+        // The object to pass to the server
+        { toRemove: selected },
+        // The function to call with the response
+        function(data) {
+        }); // End of the call to getJSON
+      
+    
+    location.assign($SCRIPT_ROOT + '/updateAfterDelete');
+}
+
+</script>
 </body>
 </html>
