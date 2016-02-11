@@ -77,7 +77,7 @@ def addMemo():
 
 
 def AddNewDatedMemo(date, text, collection):
-    arrow_date = arrow.get(date, 'MM/DD/YYYY')
+    arrow_date = arrow.get(date, 'MM/DD/YYYY').replace(tzinfo='local')
     storage_date = arrow_date.isoformat()
     #print("HERE: " + storage_date)
     record = { "type": "dated_memo", 
@@ -158,7 +158,7 @@ def humanize_arrow_date( date ):
     Arrow will try to humanize down to the minute, so we
     need to catch 'today' as a special case. 
     """
-    now = arrow.utcnow().to('local')
+    now = arrow.utcnow().to('local').replace(hour=0)
     return RelativeDate(date, now)
     
     
@@ -216,11 +216,15 @@ if __name__ == "__main__":
     app.logger.setLevel(logging.DEBUG)
     # We run on localhost only if debugging,
     # otherwise accessible to world
+    """
     if CONFIG.DEBUG:
         # Reachable only from the same computer
         app.run(port=CONFIG.PORT)
     else:
         # Reachable from anywhere 
         app.run(port=CONFIG.PORT,host="0.0.0.0")
+    """
+    app.run(port=CONFIG.PORT,host="0.0.0.0")
+    
 
     
