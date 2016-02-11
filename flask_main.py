@@ -36,7 +36,6 @@ from pymongo import MongoClient
 import CONFIG
 
 app = flask.Flask(__name__)
-app.logger.setLevel(logging.DEBUG)
 
 
 try: 
@@ -49,7 +48,6 @@ except:
     print("Failure opening database.  Is Mongo running? Correct password?")
     sys.exit(1)
 
-app.logger.debug("We got the database open")
 
 import uuid
 app.secret_key = str(uuid.uuid4())
@@ -219,18 +217,18 @@ if __name__ == "__main__":
     # exist whether this is 'main' or not
     # (e.g., if we are running in a CGI script)
     app.debug=CONFIG.DEBUG
+    app.logger.setLevel(logging.DEBUG)
     # We run on localhost only if debugging,
     # otherwise accessible to world
-    """
+    
     if CONFIG.DEBUG:
         # Reachable only from the same computer
         app.run(port=CONFIG.PORT)
     else:
         # Reachable from anywhere 
         app.run(port=CONFIG.PORT,host="0.0.0.0")
-    """
-    app.logger.debug("About to run app")
-    app.run(port=CONFIG.PORT,host="0.0.0.0")
+    
+  
     
 
     
