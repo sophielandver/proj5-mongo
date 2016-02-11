@@ -105,8 +105,6 @@ def removeMemo():
     return "nothing"
 
 def removeSelectedMemos(selected, collection):
-    print("HEREEE " + str(selected))
-    
     for record in collection.find():
         if (str(record["_id"]) in selected):
             collection.remove(record)
@@ -169,9 +167,7 @@ def RelativeDate(date, now):
     try:
         #then = arrow.get(date).to('local') #user date
         then = arrow.get(date)
-        print("here is the user date: " + str(then))
         #now = arrow.utcnow().to('local')
-        print("here is the now date: " + str(now))
         if then.date() == now.date(): #for big dif in hours dont want in 18 hours
             human = "Today"
         elif then.date() == (now.replace(days=+1)).date():
