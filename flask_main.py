@@ -35,6 +35,8 @@ from pymongo import MongoClient
 import CONFIG
 
 app = flask.Flask(__name__)
+app.logger.setLevel(logging.DEBUG)
+
 
 try: 
     dbclient = MongoClient(CONFIG.MONGO_URL)
@@ -45,6 +47,8 @@ try:
 except:
     print("Failure opening database.  Is Mongo running? Correct password?")
     sys.exit(1)
+
+app.logger.debug("We got the database open")
 
 import uuid
 app.secret_key = str(uuid.uuid4())
@@ -196,6 +200,7 @@ def get_memos(collection):
     Returns all memos in the database, in a form that
     can be inserted directly in the 'session' object.
     """
+    app.logger.debug("get_memos")
     records = [ ] #list of dictionaries {"type": "dated_memo", "date": 06/04/1995, "text":"Please clean the car"}
     for record in collection.find( { "type": "dated_memo" } ):
         #record['date'] = arrow.get(record['date']).isoformat() #THIS IS A STRING
@@ -213,7 +218,6 @@ if __name__ == "__main__":
     # exist whether this is 'main' or not
     # (e.g., if we are running in a CGI script)
     app.debug=CONFIG.DEBUG
-    app.logger.setLevel(logging.DEBUG)
     # We run on localhost only if debugging,
     # otherwise accessible to world
     """
@@ -224,6 +228,7 @@ if __name__ == "__main__":
         # Reachable from anywhere 
         app.run(port=CONFIG.PORT,host="0.0.0.0")
     """
+    app.logger.debug("About to run app")
     app.run(port=CONFIG.PORT,host="0.0.0.0")
     
 
